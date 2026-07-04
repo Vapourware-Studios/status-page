@@ -1,0 +1,3 @@
+-- AwdevHardware integration: the check is driven by externalStatusLabel = 'AwdevHardware'
+-- (an existing column, added in migration 0008). No new schema columns are required.
+-- The panel proxy and all suppression logic lives entirely in application code.

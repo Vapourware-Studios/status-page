@@ -1,0 +1,97 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Statch — configuration as code
+#
+#  This single file is the source of truth for your status page's *structure*:
+#  branding, monitor groups, monitors, notification channels and alerting rules.
+#  Edit it, redeploy (`npm run deploy`), and the running Worker reconciles the
+#  changes into its database on the next cron tick (within ~1 minute). It just
+#  works — no clicking around a dashboard to add a monitor.
+#
+#  Live operational state (incidents, maintenance windows, auto-discovered
+#  agents, push subscribers) is managed from the /admin panel, not here.
+#
+#  SECRETS: never paste real webhook URLs or tokens here. Reference a Worker
+#  secret with ${SECRET_NAME} and set it with:  npx wrangler secret put SECRET_NAME
+# ─────────────────────────────────────────────────────────────────────────────
+
+site:
+  # Displayed name of your status page. This is the placeholder every fork
+  # renames — call it whatever you like.
+  name: "Statch"
+  headline: "Current system status and incident history"
+  # Public URL of this deployment (used for share cards, RSS, agent enrolment).
+  url: "https://status.example.com"
+  # Accent colour used across the UI and share images.
+  accent: "#6366f1"
+  # Optional logo (absolute URL or /path in public/). Leave blank for text-only.
+  logo: ""
+
+# Alerting behaviour.
+alerting:
+  # Automatically open/track a rolling incident when monitors go down.
+  autoIncidents: true
+  # Number of consecutive failed checks before a monitor is declared "down".
+  # Higher values suppress flapping on flaky networks. 1 = alert immediately.
+  confirmations: 2
+
+# Monitor groups, rendered as sections on the status page, in this order.
+groups:
+  - "Core Services"
+  - "Infrastructure"
+
+# ─── Monitors ────────────────────────────────────────────────────────────────
+# `slug` is a stable identifier — keep it constant across edits so runtime
+# history (uptime, incidents) stays attached to the right monitor.
+monitors:
+  - slug: website
+    name: "Website"
+    group: "Core Services"
+    type: http                    # http | tcp | push | keyword
+    url: "https://example.com"
+    interval: 60                  # seconds between checks
+    expectStatus: [200]           # optional: acceptable status codes
+    degradedResponseMs: 800       # optional: slower than this → "degraded"
+    checkSsl: true                # warn as the TLS certificate nears expiry
+    checkCloudflare: true         # when down, sniff whether Cloudflare is the culprit
+
+  - slug: api
+    name: "API"
+    group: "Core Services"
+    type: keyword                 # http check that must contain a string
+    url: "https://example.com/health"
+    expectBody: "ok"              # response body must contain this
+    interval: 60
+    degradedResponseMs: 500
+
+  # Point at a third-party provider's official status page. When this monitor
+  # is down, Statch cross-checks that page and annotates the incident.
+  # (This is the generic version of what used to be a hard-coded integration.)
+  #   externalStatus:
+  #     label: "Upstream Provider"
+  #     url: "https://status.provider.com"
+
+  # A push / dead-man's-switch monitor: something out there must heartbeat us,
+  # or it's declared down. Enrol a machine from /admin → Monitors → Add server.
+  - slug: worker-box
+    name: "Background Worker"
+    group: "Infrastructure"
+    type: push
+    grace: 90                     # seconds without a heartbeat before "down"
+
+# ─── Notification channels ───────────────────────────────────────────────────
+# Every configured channel receives incident + recovery alerts. Use ${SECRET}
+# references, not literal URLs/tokens.
+notifications:
+  discord: []
+  #   - url: "${DISCORD_WEBHOOK_URL}"
+  slack: []
+  #   - url: "${SLACK_WEBHOOK_URL}"
+  telegram: []
+  #   - botToken: "${TELEGRAM_BOT_TOKEN}"
+  #     chatId: "${TELEGRAM_CHAT_ID}"
+  teams: []
+  #   - url: "${TEAMS_WEBHOOK_URL}"
+  pagerduty: []
+  #   - routingKey: "${PAGERDUTY_ROUTING_KEY}"
+  webhook: []
+  #   - url: "${GENERIC_WEBHOOK_URL}"

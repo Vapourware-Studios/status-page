@@ -1,0 +1,39 @@
+{
+  "name": "Statch",
+  "short_name": "Status",
+  "description": "System status and uptime monitoring",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#13111f",
+  "theme_color": "#13111f",
+  "categories": ["utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Status",
+      "url": "/",
+      "description": "View system status"
+    },
+    {
+      "name": "Admin",
+      "url": "/admin",
+      "description": "Admin panel"
+    }
+  ]
+}

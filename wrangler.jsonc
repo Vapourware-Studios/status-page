@@ -1,0 +1,54 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "statch",
+	"main": "src/worker/index.ts",
+	"compatibility_date": "2026-06-07",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": [
+			"/api/*",
+			"/install.sh",
+			"/embed.js",
+			"/rss.xml",
+			"/",
+			"/og.png",
+			"/incidents/*"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "statch-db",
+			// Filled automatically by the Deploy-to-Cloudflare button, or run
+			// `npx wrangler d1 create statch-db` and paste the id here.
+			"database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+			"migrations_dir": "migrations"
+		}
+	],
+	"triggers": {
+		"crons": [
+			"* * * * *"
+		]
+	},
+	// Add your custom domain here once the Worker is deployed, e.g.:
+	// "routes": [{ "pattern": "status.example.com", "custom_domain": true }],
+	"vars": {
+		"SERVER_URL": "https://statch.<your-subdomain>.workers.dev",
+		// Optional — only needed if you enable Discord OAuth login.
+		"DISCORD_CLIENT_ID": "",
+		"DISCORD_ALLOWED_USER_IDS": "",
+		// Optional — Discord user ID of the owner (may manage the allowed-users
+		// list). Leave blank to let the /admin password act as the sole owner.
+		"OWNER_DISCORD_ID": ""
+	}
+	// Secrets (set via `wrangler secret put NAME`):
+	//   ADMIN_PASSWORD    — password for /admin
+	//   SESSION_SECRET    — random 32+ char string
+	//   DISCORD_CLIENT_SECRET  (optional, for Discord OAuth)
+	//   plus any ${SECRET} you reference in status.config.yml
+}
