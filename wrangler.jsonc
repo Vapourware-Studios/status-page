@@ -24,9 +24,11 @@
 		{
 			"binding": "DB",
 			"database_name": "statch-db",
-			// Filled automatically by the Deploy-to-Cloudflare button, or run
-			// `npx wrangler d1 create statch-db` and paste the id here.
-			"database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+			// Placeholder UUID — replaced automatically by the Deploy-to-Cloudflare
+			// button. For manual deploys, run `npx wrangler d1 create statch-db`
+			// and paste your real database id here. Must be a valid UUID, or the
+			// Cloudflare API rejects the config ("Invalid uuid", code 7400).
+			"database_id": "20e89f67-3cb7-4755-847a-544e9d0f26f0",
 			"migrations_dir": "migrations"
 		}
 	],
